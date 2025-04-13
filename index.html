@@ -368,6 +368,10 @@
           <span class="hash">#</span>
           <span>calculator</span>
         </div>
+        <!-- New button for launching activity -->
+        <button class="btn special" onclick="launchActivityExample()">
+          Launch Activity
+        </button>
       </div>
       <div class="calculator-display-container">
         <div class="calculator-display" id="display">
@@ -592,19 +596,15 @@
         event.preventDefault();
       });
 
-      // Initialize Discord Embedded App SDK
-      // This runs when the page loads. Replace 'YOUR_CLIENT_ID' with your actual ID.
+      // Initialize Discord Embedded App SDK with activity scopes
       window.addEventListener("load", () => {
         const clientId = "1360657648848207902"; // Paste your Discord Client ID here
         if (window.DiscordEmbeddedApp) {
           window.DiscordEmbeddedApp.init(clientId, {
-            // Options can be added here, e.g., for activity features
-            // scopes: ['rpc', 'messages.read'], // Example scopes (check Discord docs)
+            scopes: ["rpc", "activities.write", "activities.read"], // Scopes for social and activity features
           })
             .then(() => {
               console.log("Discord SDK initialized successfully.");
-              // You can add more Discord interactions here, like:
-              // window.DiscordEmbeddedApp.joinVoiceChannel('channelId');
             })
             .catch((error) => {
               console.error("Error initializing Discord SDK:", error);
@@ -613,6 +613,24 @@
           console.error("Discord SDK not loaded.");
         }
       });
+
+      // Example function to launch an activity
+      function launchActivityExample() {
+        if (window.DiscordEmbeddedApp) {
+          window.DiscordEmbeddedApp.launchActivity({
+            activityId: "YOUR_ACTIVITY_ID", // Paste your Activity ID here
+            // Add more options as needed, e.g., partyId, matchId, etc.
+          })
+            .then(() => {
+              console.log("Activity launched successfully.");
+            })
+            .catch((error) => {
+              console.error("Error launching activity:", error);
+            });
+        } else {
+          console.error("Discord SDK not available.");
+        }
+      }
     </script>
   </body>
 </html>
