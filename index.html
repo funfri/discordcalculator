@@ -1,610 +1,618 @@
 <!DOCTYPE html>
-<html lang="en"><head>
-<meta http-equiv="content-type" content="text/html; charset=UTF-8">
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<html lang="en">
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>calculator ON discord</title>
     <style>
-        :root {
-            /* Dark Theme Colors */
-            --app-bg: #000000;
-            --app-dark: #000000;
-            --app-darker: #000000;
-            --app-light: #1e1f22;
-            --app-lighter: #2b2d31;
-            --app-primary: #5865f2;
-            --app-text: #ffffff;
-            --app-muted: #949ba4;
-            --app-green: #23a559;
-            --app-red: #f23f42;
-            --app-yellow: #f0b232;
-            --app-border: #2d2d2d;
-            --app-input: #1e1f22;
-            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
-            --shadow-md: 0 2px 6px rgba(0, 0, 0, 0.3);
-            --shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.45);
-        }
+      :root {
+        /* Dark Theme Colors */
+        --app-bg: #000000;
+        --app-dark: #000000;
+        --app-darker: #000000;
+        --app-light: #1e1f22;
+        --app-lighter: #2b2d31;
+        --app-primary: #5865f2;
+        --app-text: #ffffff;
+        --app-muted: #949ba4;
+        --app-green: #23a559;
+        --app-red: #f23f42;
+        --app-yellow: #f0b232;
+        --app-border: #2d2d2d;
+        --app-input: #1e1f22;
+        --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+        --shadow-md: 0 2px 6px rgba(0, 0, 0, 0.3);
+        --shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.45);
+      }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'gg sans', 'Noto Sans',
-                'Helvetica Neue', Helvetica, Arial,
-                sans-serif;
-        }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "gg sans", "Noto Sans", "Helvetica Neue", Helvetica,
+          Arial, sans-serif;
+      }
 
-        body {
-            background-color: var(--app-bg);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            color: var(--app-text);
-        }
+      body {
+        background-color: var(--app-bg);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        color: var(--app-text);
+      }
 
+      .calculator {
+        width: 80vw;
+        max-width: 320px;
+        background: linear-gradient(180deg, #0c0c0d, #111112);
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: var(--shadow-lg), 0 0 0 1px rgba(255, 255, 255, 0.03);
+        position: relative;
+        transform: scale(0.9);
+        transform-origin: center;
+      }
+
+      .calculator::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: linear-gradient(
+          90deg,
+          rgba(255, 255, 255, 0),
+          rgba(255, 255, 255, 0.08),
+          rgba(255, 255, 255, 0)
+        );
+      }
+
+      .calculator-header {
+        background-color: var(--app-dark);
+        padding: 18px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        position: relative;
+      }
+
+      .calculator-header::after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 1px;
+        box-shadow: 0 1px 5px rgba(0, 0, 0, 0.2);
+      }
+
+      .calculator-header .title {
+        font-weight: 600;
+        font-size: 16px;
+        display: flex;
+        align-items: center;
+        letter-spacing: 0.2px;
+      }
+
+      .calculator-header .title .hash {
+        color: var(--app-muted);
+        margin-right: 8px;
+        font-size: 22px;
+      }
+
+      .calculator-header .options {
+        color: var(--app-muted);
+        font-size: 18px;
+        cursor: pointer;
+        opacity: 0.8;
+        transition: opacity 0.2s;
+      }
+
+      .calculator-header .options:hover {
+        opacity: 1;
+      }
+
+      .calculator-display-container {
+        background-color: var(--app-dark);
+        padding: 20px;
+        position: relative;
+      }
+
+      .calculator-display {
+        background-color: var(--app-input);
+        border-radius: 10px;
+        padding: 20px 16px;
+        text-align: right;
+        font-size: 28px;
+        font-weight: 500;
+        height: 72px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        border: 1px solid rgba(255, 255, 255, 0.03);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3);
+        position: relative;
+      }
+
+      .calculator-display::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        border-radius: 10px;
+        box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+        pointer-events: none;
+      }
+
+      .calculator-buttons {
+        padding: 20px;
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        grid-gap: 14px;
+      }
+
+      .btn {
+        background: linear-gradient(180deg, #252629, #1e1f22);
+        border: none;
+        color: var(--app-text);
+        border-radius: 10px;
+        padding: 18px 0;
+        font-size: 20px;
+        cursor: pointer;
+        transition: all 0.15s ease;
+        font-weight: 500;
+        box-shadow: var(--shadow-sm), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .btn::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        border-radius: 10px;
+        box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+        pointer-events: none;
+      }
+
+      .btn:hover {
+        background: linear-gradient(180deg, #2c2d31, #26272a);
+        transform: translateY(-1px);
+        box-shadow: var(--shadow-md), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      }
+
+      .btn:active {
+        transform: translateY(1px);
+        background: linear-gradient(180deg, #1a1b1e, #222326);
+        box-shadow: var(--shadow-sm), inset 0 1px 2px rgba(0, 0, 0, 0.2);
+      }
+
+      .btn.operator {
+        background: linear-gradient(180deg, #5865f2, #4752c4);
+        color: white;
+      }
+
+      .btn.operator:hover {
+        background: linear-gradient(180deg, #6672ff, #5865f2);
+      }
+
+      .btn.operator:active {
+        background: linear-gradient(180deg, #4752c4, #3c45a5);
+      }
+
+      .btn.equals {
+        background: linear-gradient(180deg, #23a559, #1e8a4a);
+      }
+
+      .btn.equals:hover {
+        background: linear-gradient(180deg, #26b561, #23a559);
+      }
+
+      .btn.equals:active {
+        background: linear-gradient(180deg, #1e8a4a, #19703c);
+      }
+
+      .btn.clear {
+        background: linear-gradient(180deg, #f23f42, #da373c);
+      }
+
+      .btn.clear:hover {
+        background: linear-gradient(180deg, #f45659, #f23f42);
+      }
+
+      .btn.clear:active {
+        background: linear-gradient(180deg, #da373c, #b52e31);
+      }
+
+      .btn.special {
+        background: linear-gradient(180deg, #313338, #2b2d31);
+        color: #dcddde;
+      }
+
+      .btn.special:hover {
+        background: linear-gradient(180deg, #3a3c43, #313338);
+      }
+
+      .btn.special:active {
+        background: linear-gradient(180deg, #262729, #2a2c2f);
+      }
+
+      /* Discord's scrollbar style */
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
+
+      ::-webkit-scrollbar-track {
+        background-color: transparent;
+      }
+
+      ::-webkit-scrollbar-thumb {
+        background-color: var(--app-lighter);
+        border-radius: 4px;
+      }
+
+      .expression {
+        position: absolute;
+        bottom: 4px;
+        left: 24px;
+        font-size: 12px;
+        color: var(--app-muted);
+        opacity: 0.8;
+      }
+
+      .edit-pencil {
+        font-size: 14px;
+        margin-left: 8px;
+        opacity: 0;
+        transition: opacity 0.15s ease;
+      }
+
+      .calculator-display:hover .edit-pencil {
+        opacity: 0.8;
+      }
+
+      .typing-indicator {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        font-size: 12px;
+        color: var(--app-muted);
+        margin: 12px 20px;
+        padding-left: 4px;
+        height: 20px;
+      }
+
+      .typing-dot {
+        width: 8px;
+        height: 8px;
+        background-color: var(--app-primary);
+        border-radius: 50%;
+        animation: typingAnimation 1.2s infinite ease-in-out;
+        opacity: 0.8;
+      }
+
+      .typing-dot:nth-child(1) {
+        animation-delay: 0s;
+      }
+
+      .typing-dot:nth-child(2) {
+        animation-delay: 0.2s;
+      }
+
+      .typing-dot:nth-child(3) {
+        animation-delay: 0.4s;
+      }
+
+      @keyframes typingAnimation {
+        0%,
+        60%,
+        100% {
+          transform: translateY(0);
+        }
+        30% {
+          transform: translateY(-4px);
+        }
+      }
+
+      .calc-footer {
+        padding: 10px 0;
+        text-align: center;
+        font-size: 11px;
+        color: var(--app-muted);
+        opacity: 0.5;
+        letter-spacing: 0.5px;
+      }
+      @media (max-width: 400px) {
         .calculator {
-            width: 80vw;
-            max-width: 320px;
-            background: linear-gradient(180deg,
-                #0c0c0d, #111112);
-            border-radius: 16px;
-            overflow: hidden;
-            box-shadow: var(--shadow-lg),
-                0 0 0 1px rgba(255, 255, 255, 0.03);
-            position: relative;
-            transform: scale(0.9);
-            transform-origin: center;
-        }
-
-        .calculator::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 1px;
-            background: linear-gradient(90deg,
-                rgba(255, 255, 255, 0),
-                rgba(255, 255, 255, 0.08),
-                rgba(255, 255, 255, 0));
-        }
-
-        .calculator-header {
-            background-color: var(--app-dark);
-            padding: 18px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            border-bottom: 1px solid
-                rgba(255, 255, 255, 0.05);
-            position: relative;
-        }
-
-        .calculator-header::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 1px;
-            box-shadow: 0 1px 5px
-                rgba(0, 0, 0, 0.2);
-        }
-
-        .calculator-header .title {
-            font-weight: 600;
-            font-size: 16px;
-            display: flex;
-            align-items: center;
-            letter-spacing: 0.2px;
-        }
-
-        .calculator-header .title .hash {
-            color: var(--app-muted);
-            margin-right: 8px;
-            font-size: 22px;
-        }
-
-        .calculator-header .options {
-            color: var(--app-muted);
-            font-size: 18px;
-            cursor: pointer;
-            opacity: 0.8;
-            transition: opacity 0.2s;
-        }
-
-        .calculator-header .options:hover {
-            opacity: 1;
-        }
-
-        .calculator-display-container {
-            background-color: var(--app-dark);
-            padding: 20px;
-            position: relative;
-        }
-
-        .calculator-display {
-            background-color: var(--app-input);
-            border-radius: 10px;
-            padding: 20px 16px;
-            text-align: right;
-            font-size: 28px;
-            font-weight: 500;
-            height: 72px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            border: 1px solid
-                rgba(255, 255, 255, 0.03);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            box-shadow: inset 0 1px 3px
-                rgba(0, 0, 0, 0.3);
-            position: relative;
-        }
-
-        .calculator-display::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            border-radius: 10px;
-            box-shadow: inset 0 0 0 1px
-                rgba(255, 255, 255, 0.04);
-            pointer-events: none;
+          width: 90vw;
+          border-radius: 12px;
+          transform: scale(0.95);
         }
 
         .calculator-buttons {
-            padding: 20px;
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            grid-gap: 14px;
+          padding: 15px;
+          grid-gap: 10px;
         }
 
         .btn {
-            background: linear-gradient(180deg,
-                #252629, #1e1f22);
-            border: none;
-            color: var(--app-text);
-            border-radius: 10px;
-            padding: 18px 0;
-            font-size: 20px;
-            cursor: pointer;
-            transition: all 0.15s ease;
-            font-weight: 500;
-            box-shadow: var(--shadow-sm),
-                inset 0 1px 0
-                rgba(255, 255, 255, 0.05);
-            position: relative;
-            overflow: hidden;
+          padding: 15px 0;
+          font-size: 18px;
         }
 
-        .btn::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            border-radius: 10px;
-            box-shadow: inset 0 0 0 1px
-                rgba(255, 255, 255, 0.08);
-            pointer-events: none;
+        .calculator-display {
+          font-size: 24px;
+          height: 60px;
+          padding: 15px 12px;
         }
-
-        .btn:hover {
-            background: linear-gradient(180deg,
-                #2c2d31, #26272a);
-            transform: translateY(-1px);
-            box-shadow: var(--shadow-md),
-                inset 0 1px 0
-                rgba(255, 255, 255, 0.1);
-        }
-
-        .btn:active {
-            transform: translateY(1px);
-            background: linear-gradient(180deg,
-                #1a1b1e, #222326);
-            box-shadow: var(--shadow-sm),
-                inset 0 1px 2px
-                rgba(0, 0, 0, 0.2);
-        }
-
-        .btn.operator {
-            background: linear-gradient(180deg,
-                #5865f2, #4752c4);
-            color: white;
-        }
-
-        .btn.operator:hover {
-            background: linear-gradient(180deg,
-                #6672ff, #5865f2);
-        }
-
-        .btn.operator:active {
-            background: linear-gradient(180deg,
-                #4752c4, #3c45a5);
-        }
-
-        .btn.equals {
-            background: linear-gradient(180deg,
-                #23a559, #1e8a4a);
-        }
-
-        .btn.equals:hover {
-            background: linear-gradient(180deg,
-                #26b561, #23a559);
-        }
-
-        .btn.equals:active {
-            background: linear-gradient(180deg,
-                #1e8a4a, #19703c);
-        }
-
-        .btn.clear {
-            background: linear-gradient(180deg,
-                #f23f42, #da373c);
-        }
-
-        .btn.clear:hover {
-            background: linear-gradient(180deg,
-                #f45659, #f23f42);
-        }
-
-        .btn.clear:active {
-            background: linear-gradient(180deg,
-                #da373c, #b52e31);
-        }
-
-        .btn.special {
-            background: linear-gradient(180deg,
-                #313338, #2b2d31);
-            color: #dcddde;
-        }
-
-        .btn.special:hover {
-            background: linear-gradient(180deg,
-                #3a3c43, #313338);
-        }
-
-        .btn.special:active {
-            background: linear-gradient(180deg,
-                #262729, #2a2c2f);
-        }
-
-        /* Discord's scrollbar style */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background-color: transparent;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background-color: var(--app-lighter);
-            border-radius: 4px;
-        }
-
-        .expression {
-            position: absolute;
-            bottom: 4px;
-            left: 24px;
-            font-size: 12px;
-            color: var(--app-muted);
-            opacity: 0.8;
-        }
-
-        .edit-pencil {
-            font-size: 14px;
-            margin-left: 8px;
-            opacity: 0;
-            transition: opacity 0.15s ease;
-        }
-
-        .calculator-display:hover .edit-pencil {
-            opacity: 0.8;
-        }
-
-        .typing-indicator {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            font-size: 12px;
-            color: var(--app-muted);
-            margin: 12px 20px;
-            padding-left: 4px;
-            height: 20px;
-        }
-
-        .typing-dot {
-            width: 8px;
-            height: 8px;
-            background-color: var(--app-primary);
-            border-radius: 50%;
-            animation: typingAnimation 1.2s
-                infinite ease-in-out;
-            opacity: 0.8;
-        }
-
-        .typing-dot:nth-child(1) {
-            animation-delay: 0s;
-        }
-
-        .typing-dot:nth-child(2) {
-            animation-delay: 0.2s;
-        }
-
-        .typing-dot:nth-child(3) {
-            animation-delay: 0.4s;
-        }
-
-        @keyframes typingAnimation {
-            0%, 60%, 100% {
-                transform: translateY(0);
-            }
-            30% {
-                transform: translateY(-4px);
-            }
-        }
-
-        .calc-footer {
-            padding: 10px 0;
-            text-align: center;
-            font-size: 11px;
-            color: var(--app-muted);
-            opacity: 0.5;
-            letter-spacing: 0.5px;
-        }
-        @media (max-width: 400px) {
-            .calculator {
-                width: 90vw;
-                border-radius: 12px;
-                transform: scale(0.95);
-            }
-
-            .calculator-buttons {
-                padding: 15px;
-                grid-gap: 10px;
-            }
-
-            .btn {
-                padding: 15px 0;
-                font-size: 18px;
-            }
-
-            .calculator-display {
-                font-size: 24px;
-                height: 60px;
-                padding: 15px 12px;
-            }
-        }
+      }
     </style>
-</head>
-<body>
+    <!-- Include Discord Embedded App SDK -->
+    <script src="https://cdn.discordapp.com/embedded-app-sdk.js"></script>
+  </head>
+  <body>
     <div class="calculator">
-        <div class="calculator-header">
-            <div class="title">
-                <span class="hash">#</span>
-                <span>calculator</span>
-            </div>
+      <div class="calculator-header">
+        <div class="title">
+          <span class="hash">#</span>
+          <span>calculator</span>
         </div>
-        <div class="calculator-display-container">
-            <div class="calculator-display" id="display">
-                <span>0<span class="edit-pencil"></span></span>
-            </div>
-            <div class="expression" id="expression"></div>
+      </div>
+      <div class="calculator-display-container">
+        <div class="calculator-display" id="display">
+          <span>0<span class="edit-pencil"></span></span>
         </div>
-        <div class="calculator-buttons">
-            <button class="btn clear" onclick="clearDisplay()">C</button>
-            <button class="btn special" onclick="appendToDisplay('(')">(</button>
-            <button class="btn special" onclick="appendToDisplay(')')">)</button>
-            <button class="btn operator" onclick="appendToDisplay('/')">÷</button>
-            
-            <button class="btn" onclick="appendToDisplay('7')">7</button>
-            <button class="btn" onclick="appendToDisplay('8')">8</button>
-            <button class="btn" onclick="appendToDisplay('9')">9</button>
-            <button class="btn operator" onclick="appendToDisplay('*')">×</button>
-            
-            <button class="btn" onclick="appendToDisplay('4')">4</button>
-            <button class="btn" onclick="appendToDisplay('5')">5</button>
-            <button class="btn" onclick="appendToDisplay('6')">6</button>
-            <button class="btn operator" onclick="appendToDisplay('-')">−</button>
-            
-            <button class="btn" onclick="appendToDisplay('1')">1</button>
-            <button class="btn" onclick="appendToDisplay('2')">2</button>
-            <button class="btn" onclick="appendToDisplay('3')">3</button>
-            <button class="btn operator" onclick="appendToDisplay('+')">+</button>
-            
-            <button class="btn" onclick="appendToDisplay('0')">0</button>
-            <button class="btn" onclick="appendToDisplay('.')">.</button>
-            <button class="btn special" onclick="backspace()">⌫</button>
-            <button class="btn equals" onclick="calculate()">=</button>
-        </div>
-        <div class="typing-indicator" id="typing-indicator" style="display: none;">
-            <div class="typing-dot"></div>
-            <div class="typing-dot"></div>
-            <div class="typing-dot"></div>
-            <span id="typing-text">Calculating...</span>
-        </div>
-        <div class="calc-footer">discord calculator v1</div>
+        <div class="expression" id="expression"></div>
+      </div>
+      <div class="calculator-buttons">
+        <button class="btn clear" onclick="clearDisplay()">C</button>
+        <button class="btn special" onclick="appendToDisplay('(')">(</button>
+        <button class="btn special" onclick="appendToDisplay(')')">)</button>
+        <button class="btn operator" onclick="appendToDisplay('/')">÷</button>
+
+        <button class="btn" onclick="appendToDisplay('7')">7</button>
+        <button class="btn" onclick="appendToDisplay('8')">8</button>
+        <button class="btn" onclick="appendToDisplay('9')">9</button>
+        <button class="btn operator" onclick="appendToDisplay('*')">×</button>
+
+        <button class="btn" onclick="appendToDisplay('4')">4</button>
+        <button class="btn" onclick="appendToDisplay('5')">5</button>
+        <button class="btn" onclick="appendToDisplay('6')">6</button>
+        <button class="btn operator" onclick="appendToDisplay('-')">−</button>
+
+        <button class="btn" onclick="appendToDisplay('1')">1</button>
+        <button class="btn" onclick="appendToDisplay('2')">2</button>
+        <button class="btn" onclick="appendToDisplay('3')">3</button>
+        <button class="btn operator" onclick="appendToDisplay('+')">+</button>
+
+        <button class="btn" onclick="appendToDisplay('0')">0</button>
+        <button class="btn" onclick="appendToDisplay('.')">.</button>
+        <button class="btn special" onclick="backspace()">⌫</button>
+        <button class="btn equals" onclick="calculate()">=</button>
+      </div>
+      <div
+        class="typing-indicator"
+        id="typing-indicator"
+        style="display: none;"
+      >
+        <div class="typing-dot"></div>
+        <div class="typing-dot"></div>
+        <div class="typing-dot"></div>
+        <span id="typing-text">Calculating...</span>
+      </div>
+      <div class="calc-footer">discord calculator v1</div>
     </div>
 
     <script>
-        let displayValue = '0';
-        let expressionValue = '';
-        const display = document.getElementById('display');
-        const expression = document.getElementById('expression');
-        const typingIndicator = document.getElementById('typing-indicator');
-        let lastResult = null;
-        let newCalculation = true;
-        let isCalculating = false;
+      let displayValue = "0";
+      let expressionValue = "";
+      const display = document.getElementById("display");
+      const expression = document.getElementById("expression");
+      const typingIndicator = document.getElementById("typing-indicator");
+      let lastResult = null;
+      let newCalculation = true;
+      let isCalculating = false;
 
-        // Hide typing indicator initially
-        typingIndicator.style.display = 'none';
+      // Hide typing indicator initially
+      typingIndicator.style.display = "none";
 
-        function updateDisplay() {
-            display.innerHTML = `<span>${displayValue}<span class="edit-pencil"></span></span>`;
-            expression.textContent = expressionValue;
+      function updateDisplay() {
+        display.innerHTML = `<span>${displayValue}<span class="edit-pencil"></span></span>`;
+        expression.textContent = expressionValue;
+      }
+
+      function showTyping(show) {
+        typingIndicator.style.display = show ? "flex" : "none";
+      }
+
+      function appendToDisplay(value) {
+        if (displayValue === "Error") {
+          clearDisplay();
         }
 
-        function showTyping(show) {
-            typingIndicator.style.display = show ? 'flex' : 'none';
-        }
-
-        function appendToDisplay(value) {
-            if (displayValue === 'Error') {
-                clearDisplay();
-            }
-
-            if (newCalculation && '0123456789.('.includes(value)) {
-                displayValue = value === '.' ? '0.' : value;
-                expressionValue = displayValue;
-                newCalculation = false;
-            } else if (newCalculation && '+-*/'.includes(value)) {
-                displayValue = value;
-                expressionValue = lastResult + value;
-                newCalculation = false;
+        if (newCalculation && "0123456789.(".includes(value)) {
+          displayValue = value === "." ? "0." : value;
+          expressionValue = displayValue;
+          newCalculation = false;
+        } else if (newCalculation && "+-*/".includes(value)) {
+          displayValue = value;
+          expressionValue = lastResult + value;
+          newCalculation = false;
+        } else {
+          if (displayValue === "0" && value !== ".") {
+            displayValue = value;
+            expressionValue = value;
+          } else if (displayValue === "0" && value === ".") {
+            displayValue = "0.";
+            expressionValue = "0.";
+          } else {
+            const lastChar = displayValue.charAt(displayValue.length - 1);
+            if ("+-*/".includes(lastChar) && "+-*/".includes(value)) {
+              displayValue = displayValue.slice(0, -1) + value;
+              expressionValue = expressionValue.slice(0, -1) + value;
             } else {
-                if (displayValue === '0' && value !== '.') {
-                    displayValue = value;
-                    expressionValue = value;
-                } else if (displayValue === '0' && value === '.') {
-                    displayValue = '0.';
-                    expressionValue = '0.';
-                } else {
-                    const lastChar = displayValue.charAt(displayValue.length - 1);
-                    if ('+-*/'.includes(lastChar) && '+-*/'.includes(value)) {
-                        displayValue = displayValue.slice(0, -1) + value;
-                        expressionValue = expressionValue.slice(0, -1) + value;
-                    } else {
-                        displayValue += value;
-                        expressionValue += value;
-                    }
-                }
+              displayValue += value;
+              expressionValue += value;
             }
-            updateDisplay();
+          }
         }
+        updateDisplay();
+      }
 
-        function clearDisplay() {
-            displayValue = '0';
-            expressionValue = '';
-            lastResult = null;
-            newCalculation = true;
-            updateDisplay();
+      function clearDisplay() {
+        displayValue = "0";
+        expressionValue = "";
+        lastResult = null;
+        newCalculation = true;
+        updateDisplay();
+      }
+
+      function backspace() {
+        if (displayValue.length > 1) {
+          displayValue = displayValue.slice(0, -1);
+          expressionValue = expressionValue.slice(0, -1);
+        } else {
+          displayValue = "0";
+          expressionValue = "";
         }
+        updateDisplay();
+      }
 
-        function backspace() {
-            if (displayValue.length > 1) {
-                displayValue = displayValue.slice(0, -1);
-                expressionValue = expressionValue.slice(0, -1);
-            } else {
-                displayValue = '0';
-                expressionValue = '';
-            }
-            updateDisplay();
-        }
+      function calculate() {
+        if (isCalculating || displayValue === "Error") return;
 
-        function calculate() {
-            if (isCalculating || displayValue === 'Error') return;
-            
+        try {
+          isCalculating = true;
+          showTyping(true);
+          let currentExpression = expressionValue;
+          let calculation = expressionValue
+            .replace(/×/g, "*")
+            .replace(/÷/g, "/")
+            .replace(/−/g, "-");
+
+          setTimeout(() => {
             try {
-                isCalculating = true;
-                showTyping(true);
-                let currentExpression = expressionValue;
-                let calculation = expressionValue
-                    .replace(/×/g, '*')
-                    .replace(/÷/g, '/')
-                    .replace(/−/g, '-');
-                
-                setTimeout(() => {
-                    try {
-                        if (!calculation.trim() || /^[+\-*/]+$/.test(calculation)) {
-                            throw new Error("Invalid input");
-                        }
-                        let openParens = (calculation.match(/\(/g) || []).length;
-                        let closeParens = (calculation.match(/\)/g) || []).length;
-                        if (openParens !== closeParens) {
-                            throw new Error("Unmatched parentheses");
-                        }
-                        let result = new Function('return ' + calculation)();
-                        
-                        if (result === Infinity || result === -Infinity) {
-                            throw new Error("Division by zero");
-                        }
-                        
-                        if (Number.isFinite(result)) {
-                            if (Math.abs(result) < 1e-10) {
-                                result = 0;
-                            } else if (result.toString().includes('.') && result.toString().split('.')[1].length > 8) {
-                                result = parseFloat(result.toFixed(8));
-                            }
-                        }
-                        
-                        if (isNaN(result)) {
-                            throw new Error("Invalid calculation");
-                        }
-                        
-                        displayValue = String(result);
-                        expressionValue = currentExpression + " = " + displayValue;
-                        lastResult = displayValue;
-                        newCalculation = true;
-                        updateDisplay();
-                    } catch (error) {
-                        displayValue = 'Error';
-                        expressionValue = error.message || 'Invalid calculation';
-                        updateDisplay();
-                        setTimeout(() => {
-                            if (displayValue === 'Error') {
-                                clearDisplay();
-                            }
-                        }, 2000);
-                    } finally {
-                        showTyping(false);
-                        isCalculating = false;
-                    }
-                }, 600);
+              if (!calculation.trim() || /^[+\-*/]+$/.test(calculation)) {
+                throw new Error("Invalid input");
+              }
+              let openParens = (calculation.match(/\(/g) || []).length;
+              let closeParens = (calculation.match(/\)/g) || []).length;
+              if (openParens !== closeParens) {
+                throw new Error("Unmatched parentheses");
+              }
+              let result = new Function("return " + calculation)();
+
+              if (result === Infinity || result === -Infinity) {
+                throw new Error("Division by zero");
+              }
+
+              if (Number.isFinite(result)) {
+                if (Math.abs(result) < 1e-10) {
+                  result = 0;
+                } else if (
+                  result.toString().includes(".") &&
+                  result.toString().split(".")[1].length > 8
+                ) {
+                  result = parseFloat(result.toFixed(8));
+                }
+              }
+
+              if (isNaN(result)) {
+                throw new Error("Invalid calculation");
+              }
+
+              displayValue = String(result);
+              expressionValue = currentExpression + " = " + displayValue;
+              lastResult = displayValue;
+              newCalculation = true;
+              updateDisplay();
             } catch (error) {
-                displayValue = 'Error';
-                expressionValue = error.message || 'Invalid calculation';
-                updateDisplay();
-                showTyping(false);
-                isCalculating = false;
-                setTimeout(() => {
-                    if (displayValue === 'Error') {
-                        clearDisplay();
-                    }
-                }, 2000);
+              displayValue = "Error";
+              expressionValue = error.message || "Invalid calculation";
+              updateDisplay();
+              setTimeout(() => {
+                if (displayValue === "Error") {
+                  clearDisplay();
+                }
+              }, 2000);
+            } finally {
+              showTyping(false);
+              isCalculating = false;
             }
+          }, 600);
+        } catch (error) {
+          displayValue = "Error";
+          expressionValue = error.message || "Invalid calculation";
+          updateDisplay();
+          showTyping(false);
+          isCalculating = false;
+          setTimeout(() => {
+            if (displayValue === "Error") {
+              clearDisplay();
+            }
+          }, 2000);
+        }
+      }
+
+      document.addEventListener("keydown", (event) => {
+        if (isCalculating) return;
+
+        if (
+          (event.key >= "0" && event.key <= "9") ||
+          [".", "(", ")"].includes(event.key)
+        ) {
+          appendToDisplay(event.key);
+        } else if (event.key === "+") {
+          appendToDisplay("+");
+        } else if (event.key === "-") {
+          appendToDisplay("-");
+        } else if (event.key === "*") {
+          appendToDisplay("*");
+        } else if (event.key === "/") {
+          appendToDisplay("/");
+        } else if (event.key === "Enter" || event.key === "=") {
+          calculate();
+        } else if (event.key === "Backspace") {
+          backspace();
+        } else if (event.key === "Escape" || event.key === "Delete") {
+          clearDisplay();
         }
 
-        document.addEventListener('keydown', (event) => {
-            if (isCalculating) return;
-            
-            if (event.key >= '0' && event.key <= '9' || ['.', '(', ')'].includes(event.key)) {
-                appendToDisplay(event.key);
-            } else if (event.key === '+') {
-                appendToDisplay('+');
-            } else if (event.key === '-') {
-                appendToDisplay('-');
-            } else if (event.key === '*') {
-                appendToDisplay('*');
-            } else if (event.key === '/') {
-                appendToDisplay('/');
-            } else if (event.key === 'Enter' || event.key === '=') {
-                calculate();
-            } else if (event.key === 'Backspace') {
-                backspace();
-            } else if (event.key === 'Escape' || event.key === 'Delete') {
-                clearDisplay();
-            }
-            
-            event.preventDefault();
-        });
-    </script>
+        event.preventDefault();
+      });
 
-</body></html>
+      // Initialize Discord Embedded App SDK
+      // This runs when the page loads. Replace 'YOUR_CLIENT_ID' with your actual ID.
+      window.addEventListener("load", () => {
+        const clientId = "1360657648848207902"; // Paste your Discord Client ID here
+        if (window.DiscordEmbeddedApp) {
+          window.DiscordEmbeddedApp.init(clientId, {
+            // Options can be added here, e.g., for activity features
+            // scopes: ['rpc', 'messages.read'], // Example scopes (check Discord docs)
+          })
+            .then(() => {
+              console.log("Discord SDK initialized successfully.");
+              // You can add more Discord interactions here, like:
+              // window.DiscordEmbeddedApp.joinVoiceChannel('channelId');
+            })
+            .catch((error) => {
+              console.error("Error initializing Discord SDK:", error);
+            });
+        } else {
+          console.error("Discord SDK not loaded.");
+        }
+      });
+    </script>
+  </body>
+</html>
