@@ -4,30 +4,30 @@
   <meta charset="UTF-8">
   <meta name="viewport"
     content="width=device-width, initial-scale=1.0">
-  <title>Simple Calculator - Dark Mode</title>
+  <title>Simple Calculator - Full OLED Black</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      background-color: #121212;
-      color: #ffffff;
+      background-color: #000000; /* Pure black for full OLED */
+      color: #ffffff; /* High-contrast white text */
       display: flex;
       justify-content: center;
       align-items: center;
       height: 100vh;
       margin: 0;
-      overflow: hidden; /* Prevent body scrolling */
+      overflow: hidden;
     }
 
     #calculator {
       width: 80vw;
       max-width: 400px;
       min-width: 250px;
-      max-height: 80vh; /* Ensure it fits within viewport height */
-      background-color: #1e1e1e;
+      max-height: 80vh;
+      background-color: #000000; /* Full black background */
       padding: 20px;
       border-radius: 20px;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
-      overflow: auto; /* Allow internal scrolling if needed, but rare */
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.7); /* Deeper shadow for OLED effect */
+      overflow: auto;
       display: flex;
       flex-direction: column;
     }
@@ -41,7 +41,7 @@
       box-sizing: border-box;
       border: 1px solid #333333;
       border-radius: 15px;
-      background-color: #2c2c2c;
+      background-color: #111111; /* Very dark gray for display */
       color: #ffffff;
       margin-bottom: 15px;
       font-weight: bold;
@@ -51,7 +51,7 @@
       display: grid;
       grid-template-columns: repeat(4, 1fr);
       gap: 10px;
-      flex: 1; /* Allow buttons to take up remaining space */
+      flex: 1;
     }
 
     button {
@@ -62,24 +62,25 @@
       cursor: pointer;
       transition: background-color 0.3s, opacity 0.3s;
       color: #ffffff;
+      background-color: #222222; /* Dark button background */
     }
 
     button.number {
-      background-color: #333333;
+      background-color: #333333; /* Slightly lighter for numbers */
     }
 
     button.operator {
-      background-color: #ff9800;
+      background-color: #ff9800; /* Orange for operators */
     }
 
     button.equals {
-      background-color: #4caf50;
-      grid-column: span 2; /* Span two columns */
+      background-color: #4caf50; /* Green for equals */
+      grid-column: span 2;
     }
 
     button.clear {
-      background-color: #f44336;
-      grid-column: span 2; /* Span two columns */
+      background-color: #f44336; /* Red for clear */
+      grid-column: span 2;
     }
 
     button:hover {
@@ -91,7 +92,7 @@
       #calculator {
         width: 90vw;
         padding: 15px;
-        max-height: 90vh; /* Further ensure visibility on mobile */
+        max-height: 90vh;
       }
 
       #display {
@@ -130,10 +131,10 @@
       <button class="number" value="3">3</button>
       <button class="operator" value="-">-</button>
       <button class="number" value="0">0</button>
-      <button class="number" value=".">.</button> <!-- Added decimal button -->
-      <button class="equals" value="=">=</button> <!-- Moved to better position -->
+      <button class="number" value=".">.</button>
+      <button class="equals" value="=">=</button>
       <button class="operator" value="+">+</button>
-      <button class="clear" value="C">C</button> <!-- Clear button spanning -->
+      <button class="clear" value="C">C</button>
     </div>
   </div>
 
@@ -141,26 +142,69 @@
     const display = document.getElementById('display');
     const buttons = document.querySelectorAll('#buttons button');
 
+    // Function to sanitize input
+    function sanitizeInput(input) {
+      return input.replace(/[^0-9+\-*/().]/g, ''); // Allow only numbers and operators
+    }
+
     buttons.forEach(button => {
       button.addEventListener('click', () => {
         const value = button.value;
+        let currentValue = display.value;
 
         if (value === '=') {
-          if (display.value.trim() === '') {
+          if (currentValue.trim() === '') {
             display.value = 'Enter expression';
           } else {
             try {
-              display.value = eval(display.value);  // Evaluates the expression
+              const sanitized = sanitizeInput(currentValue); // Fix 2
+              if (sanitized.length > 20) sanitized = sanitized.slice(0, 20); // Fix 3
+              if (!/(\.\d*\.)/.test(sanitized)) { // Basic check for Fix 4
+                display.value = eval(sanitized); // Safe evaluation
+              } else {
+                display.value = 'Invalid decimal';
+              }
             } catch (error) {
-              display.value = 'Error';  // Fixed to show simple string
+              display.value = 'Error'; // Fix 1: Ensure simple string
+              setTimeout(() => { display.value = ''; }, 2000); // Fix 10: Clear after 2s
             }
           }
         } else if (value === 'C') {
-          display.value = '';
-        } else {
+          display.value = ''; // Fix 10: Improved clearing
+        } else if (value === '.') {
+          if (!currentValue.includes('.') || !/\d+\.$/.test(currentValue)) { // Fix 4: Single decimal
+            display.value += value;
+          }
+        } else if (['+', '-', '*', '/'].includes(value)) {
+          if (!/[\+\-\*\/]$/.test(currentValue)) { // Fix 5: Prevent multiple operators
+            display.value += value;
+          }
+        } else if (currentValue.length < 20) { // Fix 3: Limit length
           display.value += value;
         }
       });
+    });
+
+    // Add keyboard support (Fix 9)
+    document.addEventListener('keydown', (event) => {
+      const key = event.key;
+      if (/[0-9]/.test(key)) {
+        if (display.value.length < 20) display.value += key; // Fix 3
+      } else if (key === '.') {
+        if (!display.value.includes('.')) display.value += '.';
+      } else if (key === '+') {
+        if (!/[\+\-\*\/]$/.test(display.value)) display.value += '+';
+      } else if (key === '-') {
+        if (!/[\+\-\*\/]$/.test(display.value)) display.value += '-';
+      } else if (key === '*') display.value += '*';
+      else if (key === '/') display.value += '/';
+      else if (key === 'Enter') {
+        // Simulate '=' click
+        const evaluateEvent = new Event('click');
+        document.querySelector('button[value="="]').dispatchEvent(evaluateEvent);
+      } else if (key === 'Backspace') {
+        display.value = display.value.slice(0, -1); // Fix 10: Better clearing
+      }
     });
   </script>
 </body>
